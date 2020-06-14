@@ -18,5 +18,8 @@ python setup.py install --home="~"
 For more information about installing python programs see:
 https://docs.python.org/2/install/#alternate-installation-the-user-scheme
 
+For conda users, anarci can be installed from the bioconda channel:
+conda install -c bioconda -c conda-forge anarci
+
 For help see README or run:
 $ ANARCI -h

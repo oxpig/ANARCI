@@ -459,7 +459,7 @@ def parse_hmmer_output(filedescriptor="", bit_score_threshold=80):
     return results
 
 
-def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_score_threshold=80):
+def run_hmmer(sequence_list, hmm_database="ALL", hmmerpath="", ncpu=None, bit_score_threshold=80, hmm_path=None):
     """
     Run the sequences in sequence list against a precompiled hmm_database.
 
@@ -472,12 +472,15 @@ def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_scor
                          The code to develop new models is in build_pipeline in the git repo.
     @param hmmerpath: The path to hmmer binaries if not in the path
     @param ncpu: The number of cpu's to allow hmmer to use.
+    @param hmm_path: The path to the HMM data files, if None defaults to HMM_path
     """
 
     # Check that hmm_database is available
-    
-    assert hmm_database in ["ALL"], "Unknown HMM database %s"%hmm_database    
-    HMM = os.path.join( HMM_path, "%s.hmm"%hmm_database )
+    assert hmm_database in ["ALL"], "Unknown HMM database %s"%hmm_database
+    # If explicit hmm path is not set, set to default
+    if hmm_path is None:
+        hmm_path = HMM_path
+    HMM = os.path.join(hmm_path, "%s.hmm"%hmm_database)
 
 
     # Create a fasta file for all the sequences. Label them with their sequence index
@@ -685,7 +688,7 @@ def run_germline_assignment(state_vector, sequence, chain_type, allowed_species=
      
     return genes
 
-def check_for_j( sequences, alignments, scheme ):
+def check_for_j(sequences, alignments, scheme, hmm_path):
     '''
     As the length of CDR3 gets long (over 30ish) an alignment that does not include the J region becomes more favourable.
     This leads to really long CDR3s not being numberable. 
@@ -713,8 +716,8 @@ def check_for_j( sequences, alignments, scheme ):
                         cys_ai = ali.index( ((104, 'm'), cys_si) )
                 
                         # Try to identify a J region in the remaining sequence after the 104. A low bit score threshold is used.
-                        _, re_states, re_details  = run_hmmer( [(sequences[i][0], sequences[i][1][cys_si+1:])], 
-                                                               bit_score_threshold=10 )[0] 
+                        _, re_states, re_details  = run_hmmer([(sequences[i][0], sequences[i][1][cys_si+1:])],
+                                                               bit_score_threshold=10, hmm_path=hmm_path)[0]
 
                         # Check if a J region was detected in the remaining sequence.
                         if re_states and re_states[0][-1][0][0] >= 126 and re_states[0][0][0][0] <= 117: 
@@ -745,7 +748,7 @@ def check_for_j( sequences, alignments, scheme ):
 # Main function for ANARCI 
 # Name conflict with function, module and package is kept for legacy unless issues are reported in future. 
 def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None, csv=False, allow=set(["H","K","L","A","B","G","D"]), 
-           hmmerpath="", ncpu=None, assign_germline=False, allowed_species=None, bit_score_threshold=80):
+           hmmerpath="", ncpu=None, assign_germline=False, allowed_species=None, bit_score_threshold=80, hmm_path=None):
     """
     The main function for anarci. Identify antibody and TCR domains, number them and annotate their germline and species. 
 
@@ -780,6 +783,7 @@ def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None,
                       default is used. N.B. hmmscan must be compiled with multithreading enabled for this option to have effect. 
                       Please consider using the run_anarci function for native multiprocessing with anarci.
     @param database:  The HMMER database that should be used. Normally not changed unless a custom db is created.
+    @param hmm_path:  The path to the hmm data files. Default (None) will be set to use the default HMM_path
 
 
     @return: Three lists. Numbered, Alignment_details and Hit_tables.
@@ -808,11 +812,11 @@ def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None,
 
 
     # Perform the alignments of the sequences to the hmm database
-    alignments = run_hmmer(sequences,hmm_database=database,hmmerpath=hmmerpath,ncpu=ncpu,bit_score_threshold=bit_score_threshold )    
+    alignments = run_hmmer(sequences, hmm_database=database, hmmerpath=hmmerpath, ncpu=ncpu, bit_score_threshold=bit_score_threshold, hmm_path=hmm_path)
     
     # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
     # Modify alignments in-place
-    check_for_j( sequences, alignments, scheme )
+    check_for_j(sequences, alignments, scheme, hmm_path)
 
     # Apply the desired numbering scheme to all sequences
     numbered, alignment_details, hit_tables = number_sequences_from_alignment(sequences, alignments, scheme=scheme, allow=allow, 
@@ -822,7 +826,7 @@ def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None,
     # Output if necessary
     if output: 
         if csv:
-            csv_output(sequences, numbered, details, outfile)             
+            csv_output(sequences, numbered, alignment_details, outfile)
         else:
             outto, close=sys.stdout, False
             if outfile:

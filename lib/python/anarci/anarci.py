@@ -311,7 +311,7 @@ def _domains_are_same(dom1, dom2):
     return True
 
 
-def _parse_hmmer_query(query, bit_score_threshold=80):
+def _parse_hmmer_query(query, bit_score_threshold=80, hmmer_species=None):
     """
     
     @param query: hmmer query object from Biopython
@@ -327,9 +327,21 @@ def _parse_hmmer_query(query, bit_score_threshold=80):
     # Find the best hit for each domain in the sequence.
 
     top_descriptions, domains,state_vectors = [], [], []
-
+    
     if query.hsps: # We have some hits
-        for hsp in sorted(query.hsps, key=lambda x: x.evalue): # Iterate over the matches of the domains in order of their e-value (most significant first)
+        # If we have specified a species, check to see we have hits for that species
+        # Otherwise revert back to using any species
+        if hmmer_species:
+            hit_correct_species = [hsp for hsp in query.hsps if hsp.hit_id.startswith(hmmer_species) and hsp.bitscore >= bit_score_threshold]
+            if hit_correct_species:
+                hsp_list = hit_correct_species
+            else:
+                print("Limiting hmmer search to species %s was requested but hits did not achieve a high enough bitscore. Reverting to using any species" %(hmmer_species))
+                hsp_list = query.hsps
+        else:
+            hsp_list = query.hsps
+
+        for hsp in sorted(hsp_list, key=lambda x: x.evalue): # Iterate over the matches of the domains in order of their e-value (most significant first)
             new=True
             if hsp.bitscore >= bit_score_threshold: # Only look at those with hits that are over the threshold bit-score.
                 for i in range( len(domains) ): # Check to see if we already have seen the domain
@@ -441,7 +453,7 @@ def _hmm_alignment_to_states(hsp, n, seq_length):
     return state_vector
 
 
-def parse_hmmer_output(filedescriptor="", bit_score_threshold=80):
+def parse_hmmer_output(filedescriptor="", bit_score_threshold=80, hmmer_species=None):
     """
     Parse the output of HMMscan and return top alignment and the score table for each input sequence.
     """
@@ -454,12 +466,12 @@ def parse_hmmer_output(filedescriptor="", bit_score_threshold=80):
     with openfile(filedescriptor) as inputfile:
         p = HMMERParser( inputfile )
         for query in p:
-            results.append(_parse_hmmer_query(query,bit_score_threshold=bit_score_threshold ))
+            results.append(_parse_hmmer_query(query,bit_score_threshold=bit_score_threshold,hmmer_species=hmmer_species ))
 
     return results
 
 
-def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_score_threshold=80):
+def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_score_threshold=80, hmmer_species=None):
     """
     Run the sequences in sequence list against a precompiled hmm_database.
 
@@ -506,7 +518,7 @@ def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_scor
             _f.close()
             
             raise HMMscanError(pr_stderr)
-        results = parse_hmmer_output(output_filehandle, bit_score_threshold=bit_score_threshold)
+        results = parse_hmmer_output(output_filehandle, bit_score_threshold=bit_score_threshold, hmmer_species=hmmer_species)
         
     finally:
         # clear up
@@ -745,7 +757,7 @@ def check_for_j( sequences, alignments, scheme ):
 # Main function for ANARCI 
 # Name conflict with function, module and package is kept for legacy unless issues are reported in future. 
 def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None, csv=False, allow=set(["H","K","L","A","B","G","D"]), 
-           hmmerpath="", ncpu=None, assign_germline=False, allowed_species=None, bit_score_threshold=80):
+           hmmerpath="", ncpu=None, assign_germline=False, allowed_species=None, bit_score_threshold=80, hmmer_species=None):
     """
     The main function for anarci. Identify antibody and TCR domains, number them and annotate their germline and species. 
 
@@ -808,8 +820,8 @@ def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None,
 
 
     # Perform the alignments of the sequences to the hmm database
-    alignments = run_hmmer(sequences,hmm_database=database,hmmerpath=hmmerpath,ncpu=ncpu,bit_score_threshold=bit_score_threshold )    
-    
+    alignments = run_hmmer(sequences,hmm_database=database,hmmerpath=hmmerpath,ncpu=ncpu,bit_score_threshold=bit_score_threshold,hmmer_species=hmmer_species )   
+     
     # Check the numbering for likely very long CDR3s that will have been missed by the first pass.
     # Modify alignments in-place
     check_for_j( sequences, alignments, scheme )

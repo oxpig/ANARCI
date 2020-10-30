@@ -15,7 +15,7 @@ from distutils.core import setup
 from setuptools.command.install import install
 
 
-def download_files():
+def build():
     try:
         ANARCI_LOC = os.path.dirname(importlib.util.find_spec("anarci").origin)
     except:
@@ -48,7 +48,7 @@ class Install(install):
 
     def run(self):
         super().run()
-        download_files()
+        build()
 
 
 setup(name='anarci',

@@ -18,5 +18,11 @@ python setup.py install --home="~"
 For more information about installing python programs see:
 https://docs.python.org/2/install/#alternate-installation-the-user-scheme
 
+It is also possible to install ANARCI using package managers like `pipenv` or `poetry`. To do so add a dependency directly from git repository:
+
+`poetry add git+https://github.com/oxpig/ANARCI.git`
+
+This way you will have it installed into your `virtualenv` directory
+
 For help see README or run:
 $ ANARCI -h

@@ -741,7 +741,11 @@ def check_for_j( sequences, alignments, scheme ):
                             # Sandwich the presumed CDR3 region between the V and J regions.
 
                             vRegion   = ali[:cys_ai+1]
-                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117 ]
+#                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117 ]
+                            # HMM may assign a "delete" state (see function _hmm_alignment_to_states), in which case the
+                            # position index is None and the expression index+cys_si+1 will fail. A good solution seems
+                            # to skip such states, because they do not correspond to a position in the sequence anyway.
+                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if (state[0] >= 117) and (index is not None) ]
                             cdrRegion = []
                             next = 105
                             for si in range( cys_si+1, jRegion[0][1] ):

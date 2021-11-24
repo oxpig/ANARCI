@@ -69,7 +69,7 @@ from .germlines import all_germlines
     
 all_species = list(all_germlines['V']['H'].keys())
 
-amino_acids = sorted(list("QWERTYIPASDFGHKLCVNM"))
+amino_acids = sorted(list("QWERTYIPASDFGHKLCVNMUOBJZX"))
 set_amino_acids = set(amino_acids)
 anarci_path  = os.path.split(__file__)[0]
 

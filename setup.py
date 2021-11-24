@@ -25,8 +25,7 @@ setup(name='anarci',
       #                         'dat/HMMs/ALL.hmm.h3i',
       #                         'dat/HMMs/ALL.hmm.h3m',
       #                         'dat/HMMs/ALL.hmm.h3p']},
-      scripts=['bin/ANARCI'],
-      data_files = [ ('bin', ['bin/muscle', 'bin/muscle_macOS']) ]
+      scripts=['bin/ANARCI']
      )
 
 ####

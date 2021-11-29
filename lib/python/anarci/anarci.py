@@ -295,6 +295,27 @@ def csv_output(sequences, numbered, details, outfileroot):
                     print(','.join( line ), file=out)
 
 
+def csv_output_alignments(details, outfileroot) :
+    with open(outfileroot + '_alignments.csv', 'w') as out:
+        fields = ['query_no','query_name','id','description','evalue','bitscore','query_start','query_end','species','chain_type','scheme','bias']
+        print(','.join(fields), file=out)
+        for (index, detail) in enumerate(details):
+            for item in detail:
+                line = [str(index),
+                        item.get('query_name', ''),
+                        item.get('id', ''),
+                        item.get('description', ''),
+                        str(item.get('evalue','')),
+                        str(item.get('bitscore','')),
+                        str(item.get('query_start','')),
+                        str(item.get('query_end','')),
+                        item.get('species',''),
+                        item.get('chain_type',''),
+                        item.get('scheme',''),
+                        str(item.get('bias',''))
+                        ]
+                print(','.join(line), file=out)
+
 
 ## Parsing and recognising domain hits from hmmscan ##
 def _domains_are_same(dom1, dom2):
@@ -841,7 +862,8 @@ def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None,
     # Output if necessary
     if output: 
         if csv:
-            csv_output(sequences, numbered, details, outfile)             
+            csv_output(sequences, numbered, alignment_details, outfile)
+            csv_output_alignments(alignment_details, outfile)
         else:
             outto, close=sys.stdout, False
             if outfile:
@@ -938,7 +960,8 @@ def run_anarci( seq, ncpu=1, **kwargs):
     # Output if necessary
     if output: 
         if csv:
-            csv_output(sequences, numbered, alignment_details, outfile)             
+            csv_output(sequences, numbered, alignment_details, outfile)
+            csv_output_alignments(alignment_details, outfile)
         else:
             outto, close=sys.stdout, False
             if outfile:
@@ -994,6 +1017,10 @@ def number(sequence, scheme="imgt", database="ALL", allow=set(["H","K","L","A","
 
 if __name__ == "__main__":
     # Test and example useage of the anarci function. 
+
+    # sequences = [("seq1", "DIVMTQSPASLAVSLGQRATISCKASQSVDYDGDSYMNWYQQKPGQPPKLLIYAASNLESGIPARFSGSGSGTDFTLNIHPVEEEDAATYYCQQSNEDPYTFGAGTKLELKRTDAAPTVSIFPPSSEQLTSGGASVVCFLNNFYPKDINVKWKIDGSERQNGVLNSWTDQDSKDSTYSMSSTLTLTKDEYERHNSYTCXATHKTSTSPIVKSFNRNEC")]
+    # run_anarci(sequences, scheme="kabat", output=True, outfile="abc", csv=True)
+
     sequences = [ ("12e8:H","EVQLQQSGAEVVRSGASVKLSCTASGFNIKDYYIHWVKQRPEKGLEWIGWIDPEIGDTEYVPKFQGKATMTADTSSNTAYLQLSSLTSEDTAVYYCNAGHDYDRGRFPYWGQGTLVTVSAAKTTPPSVYPLAP"),
                   ("12e8:L","DIVMTQSQKFMSTSVGDRVSITCKASQNVGTAVAWYQQKPGQSPKLMIYSASNRYTGVPDRFTGSGSGTDFTLTISNMQSEDLADYFCQQYSSYPLTFGAGTKLELKRADAAPTVSIFPPSSEQLTSGGASV"),
                   ("scfv:A","DIQMTQSPSSLSASVGDRVTITCRTSGNIHNYLTWYQQKPGKAPQLLIYNAKTLADGVPSRFSGSGSGTQFTLTISSLQPEDFANYYCQHFWSLPFTFGQGTKVEIKRTGGGGSGGGGSGGGGSGGGGSEVQLVESGGGLVQPGGSLRLSCAASGFDFSRYDMSWVRQAPGKRLEWVAYISSGGGSTYFPDTVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCARQNKKLTWFDYWGQGTLVTVSSHHHHHH"),

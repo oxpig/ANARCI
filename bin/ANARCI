@@ -112,6 +112,7 @@ if __name__ == "__main__":
     parser.add_argument( '--assign_germline', action = 'store_true', default=False, help="Assign the v and j germlines to the sequence. The most sequence identical germline is assigned.", dest="assign_germline")
     parser.add_argument( '--use_species', type=str, default=False, help="Use a specific species in the germline assignment.", choices=all_species, dest="use_species")
     parser.add_argument( '--bit_score_threshold', type=int, default=80, help="Change the bit score threshold used to confirm an alignment should be used.", dest="bit_score_threshold")
+    parser.add_argument( '--cdr_scheme','-cs', type=str, help="Use cdr scheme will cause scheme loss impact.", dest="cdr_scheme")
 
     args = parser.parse_args()
 
@@ -187,7 +188,7 @@ if __name__ == "__main__":
         sequences, numbered, alignment_details, hit_tables =  run_anarci(args.inputsequence, scheme=args.scheme, output=True, 
                                                           outfile=outfile, csv=args.csv, allow=allow, ncpu=args.ncpu, 
                                                           assign_germline=args.assign_germline, allowed_species=allowed_species, 
-                                                          bit_score_threshold=args.bit_score_threshold )
+                                                          bit_score_threshold=args.bit_score_threshold, cdr_scheme=args.cdr_scheme)
 
         if hitfile:
             with open( hitfile, "w") as outfile:

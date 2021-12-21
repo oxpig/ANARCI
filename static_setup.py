@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 
-#                               #
-# Developed by James Dunbar     #
-# Maintained by members of OPIG #
-#                               #
-
-import shutil, os, subprocess, imp
-# Clean this out if it exists
+import shutil, os
 if os.path.isdir("build"):
     shutil.rmtree("build/")
 
@@ -28,4 +22,3 @@ setup(name='anarci',
       scripts=['bin/ANARCI'],
       data_files = [ ('bin', ['bin/muscle', 'bin/muscle_macOS']) ]
      )
-

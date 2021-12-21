@@ -282,8 +282,8 @@ def csv_output(sequences, numbered, details, outfileroot):
                              details[i][j].get('chain_type',''),
                              str(details[i][j].get('evalue','')),
                              str(details[i][j].get('bitscore','')),
-                             str(numbered[i][j][1]),
-                             str(numbered[i][j][2]),
+                             str(details[i][j].get('query_start', '')),
+                             str(details[i][j].get('query_end', '')),
                              details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[0][0],
                              details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[0][1],
                              '%.2f'%details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[1],
@@ -323,22 +323,28 @@ def csv_output_alignments(sequences, numbered, details, outfileroot, cdr_scheme)
                         chain_type,
                         item.get('scheme', ''),
                         str(item.get('bias', '')),
-                        ''.join([p[1] for p in cdrs[0]]).replace('-', ''),
-                        ''.join([p[1] for p in cdrs[1]]).replace('-', ''),
-                        ''.join([p[1] for p in cdrs[2]]).replace('-', '')
+                        '' if not cdrs else ''.join([str(p[1]) for p in cdrs[0]]).replace('-', ''),
+                        '' if not cdrs else ''.join([str(p[1]) for p in cdrs[1]]).replace('-', ''),
+                        '' if not cdrs else ''.join([str(p[1]) for p in cdrs[2]]).replace('-', '')
                         ]
                 print(','.join(line), file=out)
 
-def get_number_scheme_from_cdr_scheme(number_scheme, cdr_scheme):
+def get_defaults_from_cdr_scheme(number_scheme, allow, cdr_scheme):
     target_scheme = number_scheme
+    target_allow = allow
     if cdr_scheme:
         if cdr_scheme in ['contact', 'chothia', 'abm', 'kabat']:
             target_scheme = 'chothia'
+            target_allow = ["H", "K", "L"]
         elif cdr_scheme == 'imgt':
             target_scheme = 'imgt'
-    return target_scheme
+            target_allow = allow
+    return target_scheme, target_allow
 
 def enhanced_find_cdrs(single_numbered, cdr_scheme, chain_type):
+    if cdr_scheme is None:
+        return None
+
     if cdr_scheme == 'imgt':
         return single_numbered[3]
 
@@ -364,7 +370,7 @@ def enhanced_find_cdrs(single_numbered, cdr_scheme, chain_type):
         cdr_key = cdr_scheme + '_light'
 
     if cdr_key is None or cdr_key not in cdr_map.keys() or single_numbered is None:
-        return [[],[],[]]
+        return None
 
     cdr_regions = cdr_map[cdr_key][0]
     for index, range in enumerate(cdr_regions):
@@ -821,7 +827,7 @@ def check_for_j( sequences, alignments, scheme ):
                             # Sandwich the presumed CDR3 region between the V and J regions.
 
                             vRegion   = ali[:cys_ai+1]
-                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117 ]
+                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117]
                             cdrRegion = []
                             next = 105
                             for si in range( cys_si+1, jRegion[0][1] ):
@@ -914,7 +920,7 @@ def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None,
     # Modify alignments in-place
     check_for_j( sequences, alignments, scheme )
 
-    scheme = get_number_scheme_from_cdr_scheme(scheme, cdr_scheme)
+    scheme, allow = get_defaults_from_cdr_scheme(scheme, allow, cdr_scheme)
 
     # Apply the desired numbering scheme to all sequences
     numbered, alignment_details, hit_tables = number_sequences_from_alignment(sequences, alignments, scheme=scheme, allow=allow,
@@ -1080,8 +1086,10 @@ if __name__ == "__main__":
     # Test and example useage of the anarci function.
 
     sequences = [("seq1",
-                  "QVQLVESGGGLVKPGGSLRLSCAASGFTFSNYGMSWIRQAPGKGLEWVSTISGGGSNIYYADSVKGRFTISRDNAKNSLYLQMNSLRAEDTAVYYCVSYYYGIDFWGQGTSVTVSSASTKGPSVFPLAPCSRSTSESTAALGCLVKDYFPEPVTVSWNSGALTSGVHTFPAVLQSSGLYSLSSVVTVPSSSLGTKTYTCNVDHKPSNTKVDKRVESKYGPPCPPCPAPEFLGGPSVFLFPPKPKDTLMISRTPEVTCVVVDVSQEDPEVQFNWYVDGVEVHNAKTKPREEQFNSTYRVVSVLTVLHQDWLNGKEYKCKVSNKGLPSSIEKTISKAKGQPREPQVYTLPPSQEEMTKNQVSLTCLVKGFYPSDIAVEWESNGQPENNYKTTPPVLDSDGSFFLYSRLTVDKSRWQEGNVFSCSVMHEALHNHYTQKSLSLSLGKDIQMTQSPSSLSASVGDRVTITCKASQDVTTAVAWYQQKPGKAPKLLIYWASTRHTGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQHYTIPWTFGGGTKLEIKRTVAAPSVFIFPPSDEQLKSGTASVVCLLNNFYPREAKVQWKVDNALQSGNSQESVTEQDSKDSTYSLSSTLTLSKADYEKHKVYACEVTHQGLSSPVTKSFNRGEC")]
-    results = run_anarci(sequences, scheme="imgt", output=True, outfile="abc", csv=True, cdr_scheme='kabat')
+                  "MASISIFIVVFAFFTQESSGQITVTQTPAVKAVLHGQTVTMSCKVSPAVHNNNYLAWYQQEPGEAPKLLIYYASNRNSGIPSRFSGSGSSTDFTLTISGVQAEDAGDYYCQSEHNIGSTFSPSWLLTQ")]
+    # fasta_file = '/Users/kongwenfei/Downloads/part-00016-c849a94d-2f5b-46c6-9765-213535c72f13-c000.txt'
+    # fasta_file = '/Users/kongwenfei/Downloads/part-00000-9146dde2-26a3-4c27-acc9-72224fed81a5-c000.txt'
+    results = run_anarci(sequences, scheme="imgt", output=True, outfile="abc", csv=True)
 
     # sequences = [ ("12e8:H","EVQLQQSGAEVVRSGASVKLSCTASGFNIKDYYIHWVKQRPEKGLEWIGWIDPEIGDTEYVPKFQGKATMTADTSSNTAYLQLSSLTSEDTAVYYCNAGHDYDRGRFPYWGQGTLVTVSAAKTTPPSVYPLAP"),
     #               ("12e8:L","DIVMTQSQKFMSTSVGDRVSITCKASQNVGTAVAWYQQKPGQSPKLMIYSASNRYTGVPDRFTGSGSGTDFTLTISNMQSEDLADYFCQQYSSYPLTFGAGTKLELKRADAAPTVSIFPPSSEQLTSGGASV"),

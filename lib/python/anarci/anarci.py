@@ -192,10 +192,8 @@ def anarci_output(numbered, sequences, alignment_details, outfile, sequence_id=N
                 print("# Most significant HMM hit", file=outfile)
                 print("#|species|chain_type|e-value|score|seqstart_index|seqend_index|", file=outfile)
                 alignment_details[i][j]["evalue"] = str( alignment_details[i][j]["evalue"] )
-                print("#|%s|%s|%s|%.1f|%d|%d|"%tuple( [alignment_details[i][j][field] for field in 
-                                                                     ["species","chain_type","evalue","bitscore"]] 
-                                                                   +[ numbered[i][j][1], numbered[i][j][2]] ), file=outfile)
-                
+                print("#|%s|%s|%s|%.1f|%s|%s|"%tuple( [alignment_details[i][j][field] for field in
+                                                                     ["species","chain_type","evalue","bitscore","query_start","query_end"]]), file=outfile)
                 if 'germlines' in alignment_details[i][j]:
                     print('# Most sequence-identical germlines', file=outfile)
                     print('#|species|v_gene|v_identity|j_gene|j_identity|', file=outfile)

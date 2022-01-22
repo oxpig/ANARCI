@@ -69,7 +69,7 @@ from .germlines import all_germlines
     
 all_species = list(all_germlines['V']['H'].keys())
 
-amino_acids = sorted(list("QWERTYIPASDFGHKLCVNM"))
+amino_acids = sorted(list("QWERTYIPASDFGHKLCVNMUOBJZX"))
 set_amino_acids = set(amino_acids)
 anarci_path  = os.path.split(__file__)[0]
 
@@ -138,7 +138,10 @@ def validate_numbering(xxx_todo_changeme, name_seq=[]):
     
     Further validation could be done but at the moment we just check that the numbering indices are incremental (they should be)
     """
-    (numbering, start, end) = xxx_todo_changeme
+    numbering = xxx_todo_changeme[0]
+    start = xxx_todo_changeme[1]
+    end = xxx_todo_changeme[2]
+    cdrs = xxx_todo_changeme[3] if len(xxx_todo_changeme) >=4 else []
     name, seq = name_seq
     last = -1
     nseq=""
@@ -150,7 +153,7 @@ def validate_numbering(xxx_todo_changeme, name_seq=[]):
 
     assert nseq in seq.replace("-",""), "The algorithm did not number a contiguous segment for sequence %s. Please report"%name
 
-    return numbering, start, end
+    return numbering, start, end, cdrs
 
 def grouper(n, iterable):
     '''
@@ -189,10 +192,8 @@ def anarci_output(numbered, sequences, alignment_details, outfile, sequence_id=N
                 print("# Most significant HMM hit", file=outfile)
                 print("#|species|chain_type|e-value|score|seqstart_index|seqend_index|", file=outfile)
                 alignment_details[i][j]["evalue"] = str( alignment_details[i][j]["evalue"] )
-                print("#|%s|%s|%s|%.1f|%d|%d|"%tuple( [alignment_details[i][j][field] for field in 
-                                                                     ["species","chain_type","evalue","bitscore"]] 
-                                                                   +[ numbered[i][j][1], numbered[i][j][2]] ), file=outfile)
-                
+                print("#|%s|%s|%s|%.1f|%s|%s|"%tuple( [alignment_details[i][j][field] for field in
+                                                                     ["species","chain_type","evalue","bitscore","query_start","query_end"]]), file=outfile)
                 if 'germlines' in alignment_details[i][j]:
                     print('# Most sequence-identical germlines', file=outfile)
                     print('#|species|v_gene|v_identity|j_gene|j_identity|', file=outfile)
@@ -279,8 +280,8 @@ def csv_output(sequences, numbered, details, outfileroot):
                              details[i][j].get('chain_type',''),
                              str(details[i][j].get('evalue','')),
                              str(details[i][j].get('bitscore','')),
-                             str(numbered[i][j][1]),
-                             str(numbered[i][j][2]),
+                             str(details[i][j].get('query_start', '')),
+                             str(details[i][j].get('query_end', '')),
                              details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[0][0],
                              details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[0][1],
                              '%.2f'%details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[1],
@@ -294,6 +295,89 @@ def csv_output(sequences, numbered, details, outfileroot):
                     assert len( line ) == len( fields )
                     print(','.join( line ), file=out)
 
+def csv_output_alignments(sequences, numbered, details, outfileroot, cdr_scheme):
+    with open(outfileroot + '_alignments.csv', 'w') as out:
+        fields = ['query_no', 'query_name', 'id', 'description', 'evalue', 'bitscore', 'query_start', 'query_end',
+                  'species', 'chain_type', 'scheme', 'bias', 'cdr_1', 'cdr_2', 'cdr_3']
+        print(','.join(fields), file=out)
+
+        for i in range(len(sequences)):  # Iterate over entries
+            if numbered[i] is None: continue
+            for j in range(len(numbered[i])):
+                if details is None: continue
+                item = details[i][j]
+                chain_type = item.get('chain_type', '')
+                single_numbered = numbered[i][j]
+                cdrs = enhanced_find_cdrs(single_numbered, cdr_scheme, chain_type)
+                line = [str(i),
+                        item.get('query_name', ''),
+                        item.get('id', ''),
+                        item.get('description', ''),
+                        str(item.get('evalue', '')),
+                        str(item.get('bitscore', '')),
+                        str(item.get('query_start', '')),
+                        str(item.get('query_end', '')),
+                        item.get('species', ''),
+                        chain_type,
+                        item.get('scheme', ''),
+                        str(item.get('bias', '')),
+                        '' if not cdrs else ''.join([str(p[1]) for p in cdrs[0]]).replace('-', ''),
+                        '' if not cdrs else ''.join([str(p[1]) for p in cdrs[1]]).replace('-', ''),
+                        '' if not cdrs else ''.join([str(p[1]) for p in cdrs[2]]).replace('-', '')
+                        ]
+                print(','.join(line), file=out)
+
+def get_defaults_from_cdr_scheme(number_scheme, allow, cdr_scheme):
+    target_scheme = number_scheme
+    target_allow = allow
+    if cdr_scheme:
+        if cdr_scheme in ['contact', 'chothia', 'abm', 'kabat']:
+            target_scheme = 'chothia'
+            target_allow = ["H", "K", "L"]
+        elif cdr_scheme == 'imgt':
+            target_scheme = 'imgt'
+            target_allow = allow
+    return target_scheme, target_allow
+
+def enhanced_find_cdrs(single_numbered, cdr_scheme, chain_type):
+    if cdr_scheme is None:
+        return None
+
+    if cdr_scheme == 'imgt':
+        return single_numbered[3]
+
+    cdr_map = dict()
+    # 参考网站:
+    # http://www.bioinf.org.uk/abs/info.html (chothia的定义方案做了更新，跟其他的参考网站不一样，本方案依然采用老方案)
+    # https://plueckthun.bioc.uzh.ch/antibody/Numbering/Numbering.html (也是本程序参考的网站)
+    # https://www.novopro.cn/tools/cdr.html (chothia的cdr定义方案有bug，采用了kabat编码方案，没有对H32..H34进行逻辑判断)
+    # http://www.abysis.org/abysis/about/definitions/definitions.cgi (REGIONS对应定义方案，cdr定义方案是一致的)
+    #注：Contact，Chothia，AbM, Kabat直接采用Chothia编码方案，为的是统一， IMGT利用本程序直接返回CDR，暂时没有找到对应的方案
+    cdr_map['chothia_heavy'] = [['26','32'],['52','56'],['95','102']], [[],[],[]]
+    cdr_map['chothia_light'] = [['24','34'],['50','56'],['89','97']],[[],[],[]]
+    cdr_map['kabat_light'] = [['24','34'],['50','56'],['89','97']], [[],[],[]]
+    cdr_map['kabat_heavy'] = [['31','35'],['50','65'],['95','102']],[[],[],[]]
+    cdr_map['contact_light'] = [['30','36'],['46','55'],['89','96']], [[],[],[]]
+    cdr_map['contact_heavy'] = [['30','35'],['47','58'],['93','101']], [[],[],[]]
+    cdr_map['abm_light'] = [['24','34'],['50','56'],['89','97']], [[],[],[]]
+    cdr_map['abm_heavy'] = [['26','35'],['50','58'],['95','102']], [[],[],[]]
+
+    if chain_type == 'H':
+        cdr_key = cdr_scheme + '_heavy'
+    elif chain_type in 'KL':
+        cdr_key = cdr_scheme + '_light'
+
+    if cdr_key is None or cdr_key not in cdr_map.keys() or single_numbered is None:
+        return None
+
+    cdr_regions = cdr_map[cdr_key][0]
+    for index, range in enumerate(cdr_regions):
+        cdr_idx = [i for i, (x, y) in enumerate(single_numbered[0]) if
+                   (str(x[0]) + x[1]).strip() == range[0] or (str(x[0]) + x[1]).strip() == range[1]]
+        if len(cdr_idx) == 2:
+            #末尾是个开区间，所以要+1
+            cdr_map[cdr_key][1][index] = single_numbered[0][cdr_idx[0]:cdr_idx[1]+1]
+    return cdr_map[cdr_key][1]
 
 
 ## Parsing and recognising domain hits from hmmscan ##
@@ -741,7 +825,7 @@ def check_for_j( sequences, alignments, scheme ):
                             # Sandwich the presumed CDR3 region between the V and J regions.
 
                             vRegion   = ali[:cys_ai+1]
-                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117 ]
+                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117]
                             cdrRegion = []
                             next = 105
                             for si in range( cys_si+1, jRegion[0][1] ):
@@ -764,7 +848,8 @@ def check_for_j( sequences, alignments, scheme ):
 # Main function for ANARCI 
 # Name conflict with function, module and package is kept for legacy unless issues are reported in future. 
 def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None, csv=False, allow=set(["H","K","L","A","B","G","D"]), 
-           hmmerpath="", ncpu=None, assign_germline=False, allowed_species=None, bit_score_threshold=80):
+           hmmerpath="", ncpu=None, assign_germline=False, allowed_species=None, bit_score_threshold=80,
+           cdr_scheme=None):
     """
     The main function for anarci. Identify antibody and TCR domains, number them and annotate their germline and species. 
 
@@ -833,15 +918,17 @@ def anarci(sequences, scheme="imgt", database="ALL", output=False, outfile=None,
     # Modify alignments in-place
     check_for_j( sequences, alignments, scheme )
 
+    scheme, allow = get_defaults_from_cdr_scheme(scheme, allow, cdr_scheme)
+
     # Apply the desired numbering scheme to all sequences
-    numbered, alignment_details, hit_tables = number_sequences_from_alignment(sequences, alignments, scheme=scheme, allow=allow, 
+    numbered, alignment_details, hit_tables = number_sequences_from_alignment(sequences, alignments, scheme=scheme, allow=allow,
                                                                               assign_germline=assign_germline, 
                                                                               allowed_species=allowed_species)
 
     # Output if necessary
     if output: 
         if csv:
-            csv_output(sequences, numbered, details, outfile)             
+            csv_output(sequences, numbered, alignment_details, outfile)
         else:
             outto, close=sys.stdout, False
             if outfile:
@@ -938,7 +1025,8 @@ def run_anarci( seq, ncpu=1, **kwargs):
     # Output if necessary
     if output: 
         if csv:
-            csv_output(sequences, numbered, alignment_details, outfile)             
+            csv_output(sequences, numbered, alignment_details, outfile)
+            csv_output_alignments(sequences, numbered, alignment_details, outfile, kwargs.get('cdr_scheme'))
         else:
             outto, close=sys.stdout, False
             if outfile:
@@ -996,21 +1084,27 @@ def number(sequence, scheme="imgt", database="ALL", allow=set(["H","K","L","A","
         return False, False
 
 if __name__ == "__main__":
-    # Test and example useage of the anarci function. 
-    sequences = [ ("12e8:H","EVQLQQSGAEVVRSGASVKLSCTASGFNIKDYYIHWVKQRPEKGLEWIGWIDPEIGDTEYVPKFQGKATMTADTSSNTAYLQLSSLTSEDTAVYYCNAGHDYDRGRFPYWGQGTLVTVSAAKTTPPSVYPLAP"),
-                  ("12e8:L","DIVMTQSQKFMSTSVGDRVSITCKASQNVGTAVAWYQQKPGQSPKLMIYSASNRYTGVPDRFTGSGSGTDFTLTISNMQSEDLADYFCQQYSSYPLTFGAGTKLELKRADAAPTVSIFPPSSEQLTSGGASV"),
-                  ("scfv:A","DIQMTQSPSSLSASVGDRVTITCRTSGNIHNYLTWYQQKPGKAPQLLIYNAKTLADGVPSRFSGSGSGTQFTLTISSLQPEDFANYYCQHFWSLPFTFGQGTKVEIKRTGGGGSGGGGSGGGGSGGGGSEVQLVESGGGLVQPGGSLRLSCAASGFDFSRYDMSWVRQAPGKRLEWVAYISSGGGSTYFPDTVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCARQNKKLTWFDYWGQGTLVTVSSHHHHHH"),
-                  ("lysozyme:A","KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLCNIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL")]
+    # Test and example useage of the anarci function.
 
-    results = anarci(sequences, scheme="imgt", output=True)
-    numbering, alignment_details, hit_tables = results
+    sequences = [("seq1",
+                  "MASISIFIVVFAFFTQESSGQITVTQTPAVKAVLHGQTVTMSCKVSPAVHNNNYLAWYQQEPGEAPKLLIYYASNRNSGIPSRFSGSGSSTDFTLTISGVQAEDAGDYYCQSEHNIGSTFSPSWLLTQ")]
+    # fasta_file = '/Users/kongwenfei/Downloads/part-00016-c849a94d-2f5b-46c6-9765-213535c72f13-c000.txt'
+    # fasta_file = '/Users/kongwenfei/Downloads/part-00000-9146dde2-26a3-4c27-acc9-72224fed81a5-c000.txt'
+    results = run_anarci(sequences, scheme="imgt", output=True, outfile="abc", csv=True)
 
-    expect_one_VH_domain_numbering, expect_one_VL_domain_numbering, expect_VH_then_VL_numbering, expect_None = numbering
-    assert  len(expect_one_VH_domain_numbering) == 1
-    assert  len(expect_one_VL_domain_numbering) == 1
-    assert  len(expect_VH_then_VL_numbering)    == 2
-    assert  expect_None                         == None
-
+    # sequences = [ ("12e8:H","EVQLQQSGAEVVRSGASVKLSCTASGFNIKDYYIHWVKQRPEKGLEWIGWIDPEIGDTEYVPKFQGKATMTADTSSNTAYLQLSSLTSEDTAVYYCNAGHDYDRGRFPYWGQGTLVTVSAAKTTPPSVYPLAP"),
+    #               ("12e8:L","DIVMTQSQKFMSTSVGDRVSITCKASQNVGTAVAWYQQKPGQSPKLMIYSASNRYTGVPDRFTGSGSGTDFTLTISNMQSEDLADYFCQQYSSYPLTFGAGTKLELKRADAAPTVSIFPPSSEQLTSGGASV"),
+    #               ("scfv:A","DIQMTQSPSSLSASVGDRVTITCRTSGNIHNYLTWYQQKPGKAPQLLIYNAKTLADGVPSRFSGSGSGTQFTLTISSLQPEDFANYYCQHFWSLPFTFGQGTKVEIKRTGGGGSGGGGSGGGGSGGGGSEVQLVESGGGLVQPGGSLRLSCAASGFDFSRYDMSWVRQAPGKRLEWVAYISSGGGSTYFPDTVKGRFTISRDNAKNTLYLQMNSLRAEDTAVYYCARQNKKLTWFDYWGQGTLVTVSSHHHHHH"),
+    #               ("lysozyme:A","KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLCNIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL")]
+    #
+    # results = anarci(sequences, scheme="imgt", output=True)
+    # numbering, alignment_details, hit_tables = results
+    #
+    # expect_one_VH_domain_numbering, expect_one_VL_domain_numbering, expect_VH_then_VL_numbering, expect_None = numbering
+    # assert  len(expect_one_VH_domain_numbering) == 1
+    # assert  len(expect_one_VL_domain_numbering) == 1
+    # assert  len(expect_VH_then_VL_numbering)    == 2
+    # assert  expect_None                         == None
 
 
 

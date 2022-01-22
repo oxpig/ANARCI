@@ -1,0 +1,8 @@
+build
+build_pipeline
+Example_scripts_and_sequences
+anarci-1.*
+.idea
+*.pyc
+.DS_Store
+lib/python/anarci/__pycache__

@@ -423,7 +423,7 @@ def number_imgt(state_vector, sequence):
     # maximum length of 65 (13 positions, 26*2 insertions) . In practice ANARCI will not recognise CDR3s of this length.
     cdr3seq    = "".join([ x[1] for x in _regions[5] if x[1] != "-" ])
     cdr3length = len(cdr3seq)
-    if cdr3length > 117: return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+    if cdr3length > 117: return [], startindex, endindex # Too many insertions. Do not apply numbering.
     si = 0
     previous_state_id = 104
     for ann in get_imgt_cdr(cdr3length, 13, 105, 118):
@@ -436,7 +436,7 @@ def number_imgt(state_vector, sequence):
             si+=1
   
     # Return the full vector and the start and end indices of the numbered region of the sequence
-    return gap_missing( _numbering ), startindex, endindex
+    return gap_missing( _numbering ), startindex, endindex, [_numbering[1], _numbering[3], _numbering[5]]
   
 def get_imgt_cdr(length, maxlength, start, end):
     """
@@ -641,7 +641,7 @@ def number_aho(state_vector, sequence, chain_type):
     # longer than the number of positions.
     insertions = max( length-18 , 0 ) 
     if insertions > 26: 
-        return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+        return [], startindex, endindex # Too many insertions. Do not apply numbering.
     elif insertions > 0:
         # They are placed on residue 36 alphabetically.
         insertat = annotations.index( (36, ' ') )+1 # Always 12 
@@ -677,7 +677,7 @@ def number_aho(state_vector, sequence, chain_type):
     # Insertions are not described in the AHo scheme but must be included.
     insertions = max( length-20 , 0 ) 
     if insertions > 26: 
-        return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+        return [], startindex, endindex # Too many insertions. Do not apply numbering.
     elif insertions > 0:
         # They are placed on residue 63 alphabetically.
         insertat = annotations.index( (63, ' ') )+1 # Always 6
@@ -698,7 +698,7 @@ def number_aho(state_vector, sequence, chain_type):
     # Insertions are not described in the AHo scheme but must be included.
     insertions = max( length-16 , 0 ) 
     if insertions > 26: 
-        return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+        return [], startindex, endindex # Too many insertions. Do not apply numbering.
     elif insertions > 0:
         # They are placed on residue 85 alphabetically.
         insertat = annotations.index( (85, ' ') )+1 # Always 8
@@ -726,7 +726,7 @@ def number_aho(state_vector, sequence, chain_type):
     # Insertions are not described in the AHo scheme but must be included.
     insertions = max( length-32 , 0 ) 
     if insertions > 26: 
-        return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+        return [], startindex, endindex # Too many insertions. Do not apply numbering.
     elif insertions > 0:
         # They are placed on residue 123 alphabetically.
         insertat = annotations.index( (123, ' ') )+1 # Always 17
@@ -860,12 +860,12 @@ def number_chothia_heavy(state_vector, sequence):
     # Chothia H region 7 (index 6) 
     # put insertions onto 100
     length = len( _regions[6] )    
-    if length > 36: return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+    if length > 36: return [], startindex, endindex # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
     _numbering[6]  = [ (annotations[i], _regions[6][i][1]) for i in range(length)  ]
 
     # Return the full vector and the start and end indices of the numbered region of the sequence
-    return gap_missing( _numbering ), startindex, endindex                                     
+    return gap_missing( _numbering ), startindex, endindex
 
 # Light chains
 def number_chothia_light(state_vector, sequence):
@@ -969,13 +969,12 @@ def number_chothia_light(state_vector, sequence):
     # put insertions onto 95
     length = len( _regions[5] )    
 
-    if length > 35: return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+    if length > 35: return [], startindex, endindex # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="light")
     _numbering[5]  = [ (annotations[i], _regions[5][i][1]) for i in range(length)  ]
 
     # Return the full vector and the start and end indices of the numbered region of the sequence
-
-    return gap_missing( _numbering ), startindex, endindex    
+    return gap_missing(_numbering), startindex, endindex
 
 
 #########
@@ -1090,12 +1089,12 @@ def number_kabat_heavy(state_vector, sequence):
     # Chothia H region 7 (index 6) 
     # put insertions onto 100
     length = len( _regions[6] )    
-    if length > 36: return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+    if length > 36: return [], startindex, endindex # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="heavy") #  Chothia and Kabat the same here
     _numbering[6]  = [ (annotations[i], _regions[6][i][1]) for i in range(length)  ]
 
     # Return the full vector and the start and end indices of the numbered region of the sequence
-    return gap_missing( _numbering ), startindex, endindex            
+    return gap_missing( _numbering ), startindex, endindex
            
 # Light chains    
 def number_kabat_light(state_vector, sequence):
@@ -1192,7 +1191,7 @@ def number_kabat_light(state_vector, sequence):
     annotations = get_cdr3_annotations(length, scheme="kabat", chain_type="light")
     _numbering[5]  = [ (annotations[i], _regions[5][i][1]) for i in range(length)  ]
 
-    return gap_missing( _numbering ), startindex, endindex    
+    return gap_missing( _numbering ), startindex, endindex
 
 
 
@@ -1321,12 +1320,12 @@ def number_martin_heavy(state_vector, sequence):
     # Chothia H region 7 (index 6) 
     # put insertions onto 100
     length = len( _regions[6] )    
-    if length > 36: return [], startindex, endindex # Too many insertions. Do not apply numbering. 
+    if length > 36: return [], startindex, endindex # Too many insertions. Do not apply numbering.
     annotations = get_cdr3_annotations(length, scheme="chothia", chain_type="heavy")
     _numbering[6]  = [ (annotations[i], _regions[6][i][1]) for i in range(length)  ]
 
     # Return the full vector and the start and end indices of the numbered region of the sequence
-    return gap_missing( _numbering ), startindex, endindex                                    
+    return gap_missing( _numbering ), startindex, endindex
 
 # Light chains
 def number_martin_light(state_vector, sequence):
@@ -1465,7 +1464,7 @@ def number_wolfguy_heavy(state_vector, sequence):
     _numbering[5]  = [ ((annotations[i]," "), _regions[5][i][1]) for i in range(length)  ]    
   
     # Return the full vector and the start and end indices of the numbered region of the sequence
-    return sum( _numbering, [] ), startindex, endindex   
+    return sum( _numbering, [] ), startindex, endindex
             
 
 def number_wolfguy_light(state_vector, sequence):
@@ -1570,7 +1569,7 @@ def number_wolfguy_light(state_vector, sequence):
     _numbering[9]  = [ ((annotations[i]," "), _regions[9][i][1]) for i in range(length)  ]  
   
     # Return the full vector and the start and end indices of the numbered region of the sequence
-    return sum( _numbering, [] ), startindex, endindex  
+    return sum( _numbering, [] ), startindex, endindex
 
 
 def _get_wolfguy_L1(seq, length):
@@ -1633,7 +1632,6 @@ def gap_missing( numbering ):
                 num.append( ((_i, ' '), '-' ) )
         num.append( (p,a) )
     return num[1:]
-
 
 ######################
 # Annotation of CDR3 #

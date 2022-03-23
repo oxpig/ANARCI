@@ -224,7 +224,7 @@ def format_v_genes(valignments):
                 sequence = mouse_delta(sequence)
             new_valignments[entry][ seq ] = sequence[:108].ljust( 108 ).replace(" ",".")
             if new_valignments[entry][ seq ][103] != "C" or new_valignments[entry][ seq ][22] != "C": 
-                sys.stderr.write("Warning - this sequence alignment looks odd. Probably want to handle. Find where I am printing\n")
+                sys.stderr.write("Warning - this alignment doesn't feature CYS at position 23 and/or position 104.\n")
                 sys.stderr.write("%s,%s,%s\n" % (new_valignments[entry][ seq ], entry, seq))
 
     return new_valignments

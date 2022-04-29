@@ -138,36 +138,42 @@ ITFGKGTKLEIK
 YVFGGGTQLTVT
 >Oryctolagus_cuniculus|L|Oryctolagus cuniculus|IGLJ6*01
 VVFGGGTQLTVT
->Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ1*01
+>Macaca_mulatta|H|Macaca mulatta_17573|IGHJ1*01
 AEYFEFWGQGALVTVSS
->Macaca_mulatta|H|Macaca mulatta|IGHJ1*02
+>Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ1*02
 AEYFEFWGQGALVTVSS
+>Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ2*01
+YWYFDLWGPGTPITISS
 >Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ3*01
 DAFDFWGQGLRVTVSS
 >Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ4*01
 YFDYWGQGVLVTVSS
->Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ5-1*01
-NWFDVWGPGVLVTVSS
->Macaca_mulatta|H|Macaca mulatta|IGHJ5-1*02
+>Macaca_mulatta|H|Macaca mulatta|IGHJ5-1*01
 NRFDVWGPGVLVTVSS
->Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ5-2*01
-NSLDVWGRGVLVTVSS
->Macaca_mulatta|H|Macaca mulatta|IGHJ5-2*02
+>Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ5-1*02
+NWFDVWGPGVLVTVSS
+>Macaca_mulatta|H|Macaca mulatta|IGHJ5-2*01
 NSLDVWGQGVLVTVSS
+>Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ5-2*02
+NSLDVWGRGVLVTVSS
 >Macaca_mulatta|H|Macaca mulatta_AG07107|IGHJ6*01
 YYGLDSWGQGVVVTVSS
->Macaca_mulatta|K|Macaca mulatta|IGKJ1*01
+>Macaca_mulatta|K|Macaca mulatta_17573|IGKJ1*01
 WTFGQGTKVEIK
 >Macaca_mulatta|L|Macaca mulatta|IGLJ1*01
 YIFGAGTRLTVL
 >Macaca_mulatta|L|Macaca mulatta|IGLJ2*01
 GLFGGGTRLTVL
+>Macaca_mulatta|L|Macaca mulatta_AG07107|IGLJ2A*01
+WVFGGGTRLTVL
 >Macaca_mulatta|L|Macaca mulatta|IGLJ3*01
 VLFGGGTRLTVL
 >Macaca_mulatta|L|Macaca mulatta|IGLJ5*01
 WVFGEGTKLTIL
 >Macaca_mulatta|L|Macaca mulatta|IGLJ6*01
 DVFGSGTKLTVL
+>Macaca_mulatta|L|Macaca mulatta_AG07107|IGLJ7*01
+VMFGRGTRLTDI
 >Sus_scrofa|H|Sus scrofa|IGHJ1*01
 HGYLDSWGQGILVTVSS
 >Sus_scrofa|H|Sus scrofa|IGHJ2*01

@@ -1,18 +1,18 @@
->>V00762|IGHJ1*01|Mus musculus_BALB/c|F|J-REGION| |53 nt|2| | | |17 AA|17+0=17| | |
+>>V00762|IGHJ1*01|Mus musculus_BALB/c|F|J-REGION|444..496|53 nt|2| | | |17 AA|17+0=17| | |
 YWYFDVWGAGTTVTVSS
->>V00770|IGHJ1*02|Mus musculus|F|J-REGION| |53 nt|2| | | |17 AA|17+0=17| | |
+>>V00770|IGHJ1*02|Mus musculus|F|J-REGION|65..117|53 nt|2| | | |17 AA|17+0=17| | |
 YWYFDVWGAGTTVTVSS
->>X63164|IGHJ1*03|Mus musculus_A/J|F|J-REGION| |53 nt|2| | | |17 AA|17+0=17| | |
+>>X63164|IGHJ1*03|Mus musculus_A/J|F|J-REGION|12..64|53 nt|2| | | |17 AA|17+0=17| | |
 YWYFDVWGTGTTVTVSS
->>V00770|IGHJ2*01|Mus musculus|F|J-REGION| |48 nt|3| | | |15 AA|15+0=15| | |
+>>V00770|IGHJ2*01|Mus musculus|F|J-REGION|383..430|48 nt|3| | | |15 AA|15+0=15| | |
 YFDYWGQGTTLTVSS
->>S73821|IGHJ2*02|Mus musculus|F|J-REGION| |48 nt|3| | | |15 AA|15+0=15| | |
+>>S73821|IGHJ2*02|Mus musculus|F|J-REGION|267..314|48 nt|3| | | |15 AA|15+0=15| | |
 YFDYWGQGTSLTVSS
->>S77041|IGHJ2*03|Mus musculus|F|J-REGION| |46 nt|1| | | |15 AA|15+0=15| | |
+>>S77041|IGHJ2*03|Mus musculus|F|J-REGION|1..46|46 nt|1| | | |15 AA|15+0=15| | |
 YFDYWGQGTSLTVSS
->>V00770|IGHJ3*01|Mus musculus|F|J-REGION| |48 nt|3| | | |15 AA|15+0=15| | |
+>>V00770|IGHJ3*01|Mus musculus|F|J-REGION|766..813|48 nt|3| | | |15 AA|15+0=15| | |
 WFAYWGQGTLVTVSA
->>S73821|IGHJ3*02|Mus musculus|P|J-REGION| |48 nt|3| | | |15 AA|15+0=15| | |
+>>S73821|IGHJ3*02|Mus musculus|P|J-REGION|650..697|48 nt|3| | | |15 AA|15+0=15| | |
 WFG*WGQGTLVTVSA
->>V00770|IGHJ4*01|Mus musculus|F|J-REGION| |54 nt|3| | | |17 AA|17+0=17| | |
+>>V00770|IGHJ4*01|Mus musculus|F|J-REGION|1333..1386|54 nt|3| | | |17 AA|17+0=17| | |
 YYAMDYWGQGTSVTVSS

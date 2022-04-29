@@ -1,4 +1,4 @@
-#!/bin/python3.8
+#!/home/fergus/miniconda3/envs/anarci-test/bin/python
 #    ANARCI - Antibody Numbering and Antigen Receptor ClassIfication
 #    Copyright (C) 2016 Oxford Protein Informatics Group (OPIG)
 #
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument( '--hmmerpath','-hp', type=str, default="", help="The path to the directory containing hmmer programs. (including hmmscan)", dest="hmmerpath")
     parser.add_argument( '--ncpu','-p', type=int, default=1, help="Number of parallel processes to use. Default is 1.", dest="ncpu")
     parser.add_argument( '--assign_germline', action = 'store_true', default=False, help="Assign the v and j germlines to the sequence. The most sequence identical germline is assigned.", dest="assign_germline")
-    parser.add_argument( '--use_species', type=str, default=False, help="Use a specific species in the germline assignment.", choices=all_species, dest="use_species")
+    parser.add_argument( '--use_species', type=str, help="Use a specific species in the germline assignment. If not specified, only human and mouse germlines will be considered.", choices=all_species, dest="use_species")
     parser.add_argument( '--bit_score_threshold', type=int, default=80, help="Change the bit score threshold used to confirm an alignment should be used.", dest="bit_score_threshold")
 
     args = parser.parse_args()
@@ -174,7 +174,7 @@ if __name__ == "__main__":
         print("Warning: Non IG chains cannot be numbered with the %s scheme. These will be ignored."%args.scheme, file=sys.stderr)
         allow = allow - set(["A","B","G","D"])
         
-    allowed_species=None
+    allowed_species = ['human', 'mouse']
     if args.use_species:
         assert args.use_species in all_species, 'Unknown species'
         allowed_species = [args.use_species]

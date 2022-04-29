@@ -953,7 +953,7 @@ def run_anarci( seq, ncpu=1, **kwargs):
 
 
 # Wrapper function for simple sequence in numbering and chain type out behaviour. 
-def number(sequence, scheme="imgt", database="ALL", allow=set(["H","K","L","A","B","G","D"])):
+def number(sequence, scheme="imgt", database="ALL", allow=set(["H","K","L","A","B","G","D"]), allowed_species=[]):
     """
     Given a sequence string, use anarci to number it using the scheme of choice.
     Only the first domain will be recognised and numbered
@@ -981,7 +981,10 @@ def number(sequence, scheme="imgt", database="ALL", allow=set(["H","K","L","A","
         return False, False
    
     try:
-        numbered, alignment_details, _ = anarci( [("sequence_0", sequence)], scheme=scheme, database=database, output=False, allow=allow )
+        if not allowed_species:
+            numbered, alignment_details, _ = anarci( [("sequence_0", sequence)], scheme=scheme, database=database, output=False, allow=allow )
+        else:
+            numbered, alignment_details, _ = anarci( [("sequence_0", sequence)], scheme=scheme, database=database, output=False, allow=allow, allowed_species = allowed_species )
     except AssertionError: # Catch where the user has tried to number a TCR with an antibody scheme
         return False, False
     

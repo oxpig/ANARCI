@@ -1,20 +1,20 @@
->>V00777|IGKJ1*01|Mus musculus|F|J-REGION| |38 nt|2| | | |12 AA|12+0=12| | |
+>>V00777|IGKJ1*01|Mus musculus|F|J-REGION|740..777|38 nt|2| | | |12 AA|12+0=12| | |
 WTFGGGTKLEIK
->>M15559|IGKJ1*02|Mus musculus_C58|F|J-REGION| |37 nt|1| | | |12 AA|12+0=12| | |
+>>M15559|IGKJ1*02|Mus musculus_C58|F|J-REGION|1..37|37 nt|1| | | |12 AA|12+0=12| | |
 PTFGGGTKLEIN
->>V00777|IGKJ2*01|Mus musculus|F|J-REGION| |39 nt|3| | | |12 AA|12+0=12| | |
+>>V00777|IGKJ2*01|Mus musculus|F|J-REGION|1094..1132|39 nt|3| | | |12 AA|12+0=12| | |
 YTFGGGTKLEIK
->>M15559|IGKJ2*02|Mus musculus_C58|F|J-REGION| |39 nt|3| | | |12 AA|12+0=12| | |
+>>M15559|IGKJ2*02|Mus musculus_C58|F|J-REGION|353..391|39 nt|3| | | |12 AA|12+0=12| | |
 YTFGSGTKLEMK
->>M27036|IGKJ2*03|Mus musculus_C58|F|J-REGION| |39 nt|3| | | |12 AA|12+0=12| | |
+>>M27036|IGKJ2*03|Mus musculus_C58|F|J-REGION|439..477|39 nt|3| | | |12 AA|12+0=12| | |
 YTFGSGTKLEIK
->>V00777|IGKJ3*01|Mus musculus|ORF|J-REGION| |38 nt|2| | | |12 AA|12+0=12| | |
+>>V00777|IGKJ3*01|Mus musculus|ORF|J-REGION|1401..1438|38 nt|2| | | |12 AA|12+0=12| | |
 ITFSDGTRLEIK
->>M27037|IGKJ3*02|Mus musculus_SJL|ORF|J-REGION| |38 nt|2| | | |12 AA|12+0=12| | |
+>>M27037|IGKJ3*02|Mus musculus_SJL|ORF|J-REGION|746..783|38 nt|2| | | |12 AA|12+0=12| | |
 TTFSDGTRLEIK
->>V00777|IGKJ4*01|Mus musculus|F|J-REGION| |38 nt|2| | | |12 AA|12+0=12| | |
+>>V00777|IGKJ4*01|Mus musculus|F|J-REGION|1725..1762|38 nt|2| | | |12 AA|12+0=12| | |
 FTFGSGTKLEIK
->>M15559|IGKJ4*02|Mus musculus_C58|F|J-REGION| |38 nt|2| | | |12 AA|12+0=12| | |
+>>M15559|IGKJ4*02|Mus musculus_C58|F|J-REGION|985..1022|38 nt|2| | | |12 AA|12+0=12| | |
 FTFGTGTKLEIK
->>V00777|IGKJ5*01|Mus musculus|F|J-REGION| |38 nt|2| | | |12 AA|12+0=12| | |
+>>V00777|IGKJ5*01|Mus musculus|F|J-REGION|2063..2100|38 nt|2| | | |12 AA|12+0=12| | |
 LTFGAGTKLELK

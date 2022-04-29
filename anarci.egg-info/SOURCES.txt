@@ -1,0 +1,15 @@
+LICENCE
+LICENCE_MUSCLE
+README
+setup.py
+anarci.egg-info/PKG-INFO
+anarci.egg-info/SOURCES.txt
+anarci.egg-info/dependency_links.txt
+anarci.egg-info/top_level.txt
+bin/ANARCI
+bin/muscle
+bin/muscle_macOS
+lib/python/anarci/__init__.py
+lib/python/anarci/anarci.py
+lib/python/anarci/germlines.py
+lib/python/anarci/schemes.py

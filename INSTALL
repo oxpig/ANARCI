@@ -4,19 +4,41 @@
 
 Requirements:
     -  HMMER3 version 3.1 or higher - http://hmmer.janelia.org/ 
-     
-To install as root run:
+    -  muscle v3 - http://www.drive5.com/muscle/
 
-python setup.py install
+# Build
 
-for users without root access install locally using:
+    bash build.sh
 
-python setup.py install --user
+# Installing
+## With `pip`
+Either as root or as user, with:
+
+    pip3 install .
+
+## Without `pip`
+As root:
+
+    python3 setup.py install
+
+As user:
+
+    python3 setup.py install --user
+
 or
-python setup.py install --home="~"
 
-For more information about installing python programs see:
-https://docs.python.org/2/install/#alternate-installation-the-user-scheme
+    python3 setup.py install --home="~"
+
+# Uninstalling
+## With `pip`
+
+    pip3 uninstall anarci
+
+## Without `pip`
+Manually remove the installed files. Find the executable and python module with
+
+	which ANARCI
+	python3 -c 'import importlib; print(importlib.util.find_spec("anarci").submodule_search_locations)'
 
 For help see README or run:
 $ ANARCI -h

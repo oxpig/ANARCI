@@ -1,0 +1,15 @@
+*.swp
+*.pyc
+**/__pycache__/
+
+/anarci.egg-info/
+/dist/
+/build/
+/build_pipeline/IMGT_sequence_files/
+/build_pipeline/curated_alignments/
+/build_pipeline/muscle_alignments/
+/build_pipeline/HMMs/
+
+/lib/python/anarci/germlines.py
+/lib/python/anarci/dat/
+

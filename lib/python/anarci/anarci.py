@@ -953,7 +953,7 @@ def run_anarci( seq, ncpu=1, **kwargs):
 
 
 # Wrapper function for simple sequence in numbering and chain type out behaviour. 
-def number(sequence, scheme="imgt", database="ALL", allow=set(["H","K","L","A","B","G","D"]), allowed_species=[]):
+def number(sequence, scheme="imgt", database="ALL", allow=set(["H","K","L","A","B","G","D"]), allowed_species=['human','mouse']):
     """
     Given a sequence string, use anarci to number it using the scheme of choice.
     Only the first domain will be recognised and numbered

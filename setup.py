@@ -10,9 +10,6 @@ import shutil, os, subprocess, importlib
 if os.path.isdir("build"):
     shutil.rmtree("build/")
 
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
-
 from distutils.core import setup
 
 setup(name='anarci',
@@ -23,7 +20,6 @@ setup(name='anarci',
       url='http://opig.stats.ox.ac.uk/webapps/ANARCI',
       packages=['anarci'], 
       package_dir={'anarci': 'lib/python/anarci'},
-      install_requires=requirements,
       #package_data={'anarci': ['dat/HMMs/ALL.hmm',
       #                         'dat/HMMs/ALL.hmm.h3f',
       #                         'dat/HMMs/ALL.hmm.h3i',

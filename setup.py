@@ -5,7 +5,7 @@
 # Maintained by members of OPIG #
 #                               #
 
-import shutil, os, subprocess, importlib
+import shutil, os, subprocess, importlib.util
 # Clean this out if it exists
 if os.path.isdir("build"):
     shutil.rmtree("build/")

@@ -43,7 +43,7 @@ except Exception as e:
 os.chdir("build_pipeline")
 
 try:
-    shutil.rmtree("curated_alignments/")
+    #shutil.rmtree("curated_alignments/")
     shutil.rmtree("muscle_alignments/")
     shutil.rmtree("HMMs/")
     shutil.rmtree("IMGT_sequence_files/")

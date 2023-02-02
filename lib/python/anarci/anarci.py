@@ -99,16 +99,18 @@ def fasta_iter(fasta_name):
     Given a fasta file. yield tuples of header, sequence
     https://www.biostars.org/p/710/
     """
-    if fasta_name.endswith( '.gz' ): # IOError raised upon iteration if not a real gzip file.
-        fh = gzip.open(fasta_name)
+    if fasta_name.endswith('.gz'): # IOError raised upon iteration if not a real gzip file.
+        #fh = gzip.open(fasta_name)
+        open_fn = gzip.open
     else:
-        fh = open(fasta_name)
-    faiter = (x[1] for x in groupby(fh, lambda line: line[0] == ">"))
-    for header in faiter:
-        header = next(header)[1:].strip()
-        #header = header.next()[1:].strip()
-        seq = "".join(s.strip() for s in next(faiter))
-        yield header, seq
+        #fh = open(fasta_name)
+        open_fn = open
+    with open_fn(fasta_name) as fh:
+        faiter = (x[1] for x in groupby(fh, lambda line: line[0] == ">"))
+        for header in faiter:
+            header = next(header)[1:].strip()
+            seq = "".join(s.strip() for s in next(faiter))
+            yield header, seq
 
 
 def write_fasta(sequences, f):
@@ -502,6 +504,7 @@ def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_scor
     # Create a fasta file for all the sequences. Label them with their sequence index
     # This will go to a temp file
     fasta_filehandle, fasta_filename =  tempfile.mkstemp( ".fasta", text=True )
+    S    
     with os.fdopen(fasta_filehandle,'w') as outfile:
         write_fasta(sequence_list, outfile)
 
@@ -529,6 +532,8 @@ def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_scor
         
     finally:
         # clear up
+        os.close(fasta_filehandle)
+        os.close(output_filehandle)
         os.remove(fasta_filename)
         os.remove(output_filename)
         

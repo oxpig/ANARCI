@@ -17,7 +17,7 @@ class CustomInstallCommand(install):
        # Build HMMs from IMGT germlines
        os.chdir("build_pipeline")
        print('INFO: Downloading germlines from IMGT and building HMMs...')
-       print('INFO: running 'RUN_pipeline.sh', this will take a couple a minutes.')
+       print("INFO: running 'RUN_pipeline.sh', this will take a couple a minutes.")
        proc = subprocess.Popen(["bash", "RUN_pipeline.sh"], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
        o, e = proc.communicate()
 

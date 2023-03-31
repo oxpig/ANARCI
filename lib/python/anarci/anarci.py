@@ -523,7 +523,6 @@ def run_hmmer(sequence_list,hmm_database="ALL",hmmerpath="", ncpu=None, bit_scor
         if pr_stderr:
             _f = os.fdopen(output_filehandle) # This is to remove the filedescriptor from the os. I have had problems with it before.
             _f.close()
-            
             raise HMMscanError(pr_stderr)
         results = parse_hmmer_output(output_filehandle, bit_score_threshold=bit_score_threshold, hmmer_species=hmmer_species)
         

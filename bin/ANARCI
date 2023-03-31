@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 #    ANARCI - Antibody Numbering and Antigen Receptor ClassIfication
 #    Copyright (C) 2016 Oxford Protein Informatics Group (OPIG)
 #
@@ -175,6 +175,7 @@ if __name__ == "__main__":
         allow = allow - set(["A","B","G","D"])
         
     allowed_species = ['human', 'mouse']
+    
     if args.use_species:
         assert args.use_species in all_species, 'Unknown species'
         allowed_species = [args.use_species]

@@ -4,3 +4,6 @@ build_pipeline/curated_alignments
 build_pipeline/HMMs
 build_pipeline/__pycache__
 build/
+lib/python/anarci/__pycache__/*
+anarci.egg-info/
+dist/

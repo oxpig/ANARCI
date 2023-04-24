@@ -1,0 +1,22 @@
+########################
+# ANARCI INSTALLATION  #
+########################
+
+Requirements:
+    -  HMMER3 version 3.1 or higher - http://hmmer.janelia.org/ 
+     
+To install as root run:
+
+python setup.py install
+
+for users without root access install locally using:
+
+python setup.py install --user
+or
+python setup.py install --home="~"
+
+For more information about installing python programs see:
+https://docs.python.org/2/install/#alternate-installation-the-user-scheme
+
+For help see README or run:
+$ ANARCI -h

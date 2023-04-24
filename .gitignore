@@ -1,0 +1,5 @@
+build_pipeline/HMMs/
+build_pipeline/IMGT_sequence_files/
+build_pipeline/curated_alignments/
+build_pipeline/muscle_alignments/
+build/

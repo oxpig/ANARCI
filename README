@@ -10,6 +10,7 @@ ANARCI -i <inputsequence or fasta file>
 
 Requirements:
  -  HMMER3 version 3.1b1 or higher - http://hmmer.janelia.org/ 
+ -  Biopython
 
 e.g. 
     ANARCI -i Example_sequence_files/12e8.fasta 

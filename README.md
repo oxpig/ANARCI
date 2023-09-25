@@ -1,78 +1,50 @@
-
+```
 ANARCI                                                 \\    //
 Antibody Numbering and Antigen Receptor ClassIfication  \\  //
                                                           ||
 (c) Oxford Protein Informatics Group (OPIG). 2015-20      ||
 
-Usage:
-
-ANARCI -i <inputsequence or fasta file>
-
-Requirements:
- -  HMMER3 version 3.1b1 or higher - http://hmmer.janelia.org/ 
- -  Biopython
-
-e.g. 
-    ANARCI -i Example_sequence_files/12e8.fasta 
-    This will number the files in 12e8.fasta with imgt numbering scheme and print to stdout.
-
-    ANARCI -i Example_sequence_files/sequences.fasta -o Numbered_sequences.anarci -ht hit_tables.txt -s chothia -r ig 
-    This will number the files in sequences.fasta with chothia numbering scheme only if they are an antibody chain (ignore TCRs).
-    It will put the numbered sequences in Numbered_sequences.anarci and the alignment statistics in hit_tables.txt
-    
-    ANARCI -i Example_sequence_files/lysozyme.fasta
-    No antigen receptors should be found. The program will just list the names of the sequences. 
-
-    ANARCI -i EVQLQQSGAEVVRSGASVKLSCTASGFNIKDYYIHWVKQRPEKGLEWIGWIDPEIGDTEYVPKFQGKATMTADTSSNTAYLQLSSLTSEDTAVYYCNAGHDYDRGRFPYWGQGTLVTVSA
-    Or just give a single sequence to be numbered. 
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --sequence INPUTSEQUENCE, -i INPUTSEQUENCE
-                        A sequence or an input fasta file
-  --outfile OUTFILE, -o OUTFILE
-                        The output file to use. Default is stdout
-  --scheme {kabat,aho,wolfguy,imgt,a,c,chothia,i,k,m,w,martin}, -s {kabat,aho,wolfguy,imgt,a,c,chothia,i,k,m,w,martin}
-                        Which numbering scheme should be used. i, k, c, m, w
-                        and a are shorthand for IMGT, Kabat, Chothia, Martin
-                        (Extended Chothia), Wolfguy and Aho respectively.
-                        Default IMGT
-  --restrict {ig,tr,heavy,light,H,K,L,A,B} [{ig,tr,heavy,light,H,K,L,A,B} ...], -r {ig,tr,heavy,light,H,K,L,A,B} [{ig,tr,heavy,light,H,K,L,A,B} ...]
-                        Restrict ANARCI to only recognise certain types of
-                        receptor chains.
-  --csv                 Write the output in csv format. Outfile must be
-                        specified. A csv file is written for each chain type
-                        <outfile>_<chain_type>.csv. Kappa and lambda are
-                        considered together.
-  --outfile_hits HITFILE, -ht HITFILE
-                        Output file for domain hit tables for each sequence.
-                        Otherwise not output.
-  --hmmerpath HMMERPATH, -hp HMMERPATH
-                        The path to the directory containing hmmer programs.
-                        (including hmmscan)
-  --ncpu NCPU, -p NCPU  Number of parallel processes to use. Default is 1.
-  --assign_germline     Assign the v and j germlines to the sequence. The most
-                        sequence identical germline is assigned.
-  --use_species {alpaca,rabbit,rhesus,pig,rat,human,mouse}
-                        Use a specific species in the germline assignment.
-  --bit_score_threshold BIT_SCORE_THRESHOLD
-                        Change the bit score threshold used to confirm an
-                        alignment should be used.
-
 Author: James Dunbar (dunbar@stats.ox.ac.uk)
         Charlotte Deane (deane@stats.ox.ac.uk)
 
 Contact: opig@stats.ox.ac.uk
-        
---------------------------------------------------------------------------------------
 
-Output files:
+```
 
-The numbering file.
+# Usage:
 
-    The numbering file (--outfile or stdout) reports the numbering for all sequences given in the sequence file. Each record is separated by "//".
-    Those chains for which no significant alignment was found report the name as in the fasta file. e.g:
-    
+* Numbering a single sequence
+```python
+ANARCI -i EVQLQQSGAEVVRSGASVKLSCTASGFNIKDYYIHWVKQRPEKGLEWIGWIDPEIGDTEYVPKFQGKATMTADTSSNTAYLQLSSLTSEDTAVYYCNAGHDYDRGRFPYWGQGTLVTVSA
+```
+
+* Numbering sequences in a FASTA file
+
+```python
+ANARCI -i myfile.fasta 
+```
+
+# Installation
+
+The easiest way to install ANARCI and its dependencies is using conda
+
+```python
+conda install -c conda-forge openmm pdbfixer -y
+conda install -c bioconda hmmer=3.3.2 biopython -y
+cd ANARCI
+python setup.py install
+```
+
+# Further info
+
+## Output files
+
+* The numbering file.
+
+The numbering file (`--outfile` or stdout) reports the numbering for all sequences given in the sequence file. Each record is separated by "//".
+Those chains for which no significant alignment was found report the name as in the fasta file. e.g:
+
+```    
 # 1A14:N|PDBID|CHAIN|SEQUENCE
 //
      
@@ -118,22 +90,23 @@ H 5       Q
     v_identity       = The sequence identity over the v-region to the most sequence identical germline
     j_gene           = The identifier of the most sequence identical germline over the j-region
     j_identity       = The sequence identity over the j-region to the most sequence identical germline
+```
 
+* The csv format output file.
 
-
-The csv format output file.
-
-    When the --csv option is specified, numbered sequences are output into separate comma separated value files depending on their
+    When the `--csv` option is specified, numbered sequences are output into separate comma separated value files depending on their
     chain type. This provides a horizontal output format and contains all the properties detailed above. In addition, sequences 
     are aligned according to the numbering scheme. 
 
 
-The hit file.
+* The hit file.
 
     The hit file reports the statistics for all alignments to each HMM in the database even if the sequence was not numbered.
     Each record is separated by "//". 
     
-    The corresponding hit table for the numbered entry above looks like:    
+    The corresponding hit table for the numbered entry above looks like:
+
+```    
     """
         NAME     1a14_H mol:protein length:120  NC10 FV (HEAVY CHAIN)
     SEQUENCE QVQLQQSGAELVKPGASVRMSCKASGYTFTNYNMYWVKQSPGQGLEWIGIFYPGNGDTSYNQKFKDKATLT
@@ -167,60 +140,61 @@ The hit file.
              rabbit_K                             2.5e-06              18.4               5.8           4.2e-06              17.7               5.8               1.4                 1
     //
     """
-    We therefore get a ranking of the alignments to each chain type. 
 
---------------------------------------------------------------------------------------
+```
 
-Schemes:
+We therefore get a ranking of the alignments to each chain type. 
+
+## Schemes:
 
     
-    Currently implemented schemes: 
-        IMGT
-        Chothia (IGs only)
-        Kabat (IGs only)
-        Martin / Enhanced Chothia (IGs only)
-        AHo 
-        Wolfguy (IGs only)
-            
-    Currently recognisable species (chains):
-        Human (heavy, kappa, lambda, alpha, beta)
-        Mouse (heavy, kappa, lambda, alpha, beta)
-        Rat (heavy, kappa, lambda)
-        Rabbit (heavy, kappa, lambda)
-        Pig (heavy, kappa, lambda)
-        Rhesus Monkey (heavy, kappa)
+* Currently implemented schemes: 
+    IMGT
+    Chothia (IGs only)
+    Kabat (IGs only)
+    Martin / Enhanced Chothia (IGs only)
+    AHo 
+    Wolfguy (IGs only)
         
-    Other species may still be numbered correctly and the chain type recognised but the species be incorrect. e.g. llama VHH.
+* Currently recognisable species (chains):
+    Human (heavy, kappa, lambda, alpha, beta)
+    Mouse (heavy, kappa, lambda, alpha, beta)
+    Rat (heavy, kappa, lambda)
+    Rabbit (heavy, kappa, lambda)
+    Pig (heavy, kappa, lambda)
+    Rhesus Monkey (heavy, kappa)
     
-    
-    IMGT     - has 128 possible positions for *all* antigen receptor types. These are supposed to be structurally equivalent.
-               In theory these are supposed to account for all possible positions. However, insertions are possible especially
-               at CDR3. ANARCI gives the insertion codes as letters. Insertions at CDR3 are placed symmetrically about imgt
-               positions 111 and 112. e.g. 111-ABCD DCBA-112. 
-               
-    Kabat    - is defined for heavy and light chain antibody chains only (in ANARCI). Positions in the two chain types are not
-               equivalent. Insertions occur at specific positions and can occur in both the framework and the CDRs. They are
-               annotated from A->Z. e.g 100ABCDEFGH 101.       
-    
-    Chothia  - is defined for heavy and light chain antibody chains only (in ANARCI). Numbering in the two chain types are not
-               equivalent. Insertions occur at specific positions and can occur in both the framework and the CDRs. They are
-               annotated from A->Z. e.g 100ABCDEFGH 101. It differs to the Kabat scheme by the position it places the insertions
-               at CDRH1.   
-   
-    Martin   - is defined for heavy and light chain antibody chains only. Numbering in the two chain types are not equivalent. 
-               Insertions occur at specific positions and can occur in both the framework and the CDRs. They are annotated from
-               A->Z. e.g 100ABCDEFGH 101. It differs to the Chothia scheme by the position it places the certain insertions in
-               the framework. It is also referred to as the enhanced Chothia scheme.
-   
-    AHo      - has 149 possible for *all* antigen receptor types. These are supposed to be structurally equivalent. The AHo
-               scheme's large number of positions is supposed to account for all possible positions without the need for 
-               specifying insertion positions. In ANARCI, extra residues in the framework may be represented by insertions
-               although these are unlikely to occur in natural sequences.
+Other species may still be numbered correctly and the chain type recognised but the species be incorrect. e.g. llama VHH.
 
-    Wolfguy  - is defined for heavy and light antibody chains. Numbering in the two chain types are not equivalent. Different 
-               regions of the domain are denoted by a range of numbers. Many possible positions in the CDRs mean that insertion
-               codes are not required. In ANARCI, extra residues in the framework may be represented by insertions
-               although these are unlikely to occur in natural sequences. The CDRs are numbered in an 'up' and 'down' direction.
-               The annotations of CDRL1 is defined according to the canonical structure. In ANARCI this is recognised by taking
-               a sequence similarity to hard coded sequence motifs for different lengths.
--------------------------------------------------------------------------------------
+
+* IMGT     - has 128 possible positions for *all* antigen receptor types. These are supposed to be structurally equivalent.
+            In theory these are supposed to account for all possible positions. However, insertions are possible especially
+            at CDR3. ANARCI gives the insertion codes as letters. Insertions at CDR3 are placed symmetrically about imgt
+            positions 111 and 112. e.g. 111-ABCD DCBA-112. 
+            
+* Kabat    - is defined for heavy and light chain antibody chains only (in ANARCI). Positions in the two chain types are not
+            equivalent. Insertions occur at specific positions and can occur in both the framework and the CDRs. They are
+            annotated from A->Z. e.g 100ABCDEFGH 101.       
+
+* Chothia  - is defined for heavy and light chain antibody chains only (in ANARCI). Numbering in the two chain types are not
+            equivalent. Insertions occur at specific positions and can occur in both the framework and the CDRs. They are
+            annotated from A->Z. e.g 100ABCDEFGH 101. It differs to the Kabat scheme by the position it places the insertions
+            at CDRH1.   
+
+* Martin   - is defined for heavy and light chain antibody chains only. Numbering in the two chain types are not equivalent. 
+            Insertions occur at specific positions and can occur in both the framework and the CDRs. They are annotated from
+            A->Z. e.g 100ABCDEFGH 101. It differs to the Chothia scheme by the position it places the certain insertions in
+            the framework. It is also referred to as the enhanced Chothia scheme.
+
+* AHo      - has 149 possible for *all* antigen receptor types. These are supposed to be structurally equivalent. The AHo
+            scheme's large number of positions is supposed to account for all possible positions without the need for 
+            specifying insertion positions. In ANARCI, extra residues in the framework may be represented by insertions
+            although these are unlikely to occur in natural sequences.
+
+* Wolfguy  - is defined for heavy and light antibody chains. Numbering in the two chain types are not equivalent. Different 
+            regions of the domain are denoted by a range of numbers. Many possible positions in the CDRs mean that insertion
+            codes are not required. In ANARCI, extra residues in the framework may be represented by insertions
+            although these are unlikely to occur in natural sequences. The CDRs are numbered in an 'up' and 'down' direction.
+            The annotations of CDRL1 is defined according to the canonical structure. In ANARCI this is recognised by taking
+            a sequence similarity to hard coded sequence motifs for different lengths.
+

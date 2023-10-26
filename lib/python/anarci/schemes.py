@@ -275,6 +275,7 @@ def _number_regions(sequence, state_vector, state_string , region_string,  regio
             # Check whether this position is in the scheme as an independent state
             if state_string[state_id-1]=="I": # No, therefore irrelevant to the scheme.
                 rels[region] -= 1 # Update the relative numbering from the imgt states
+                previous_state_id = state_id # Record the previous state ID, should not be needed (no delete to insert state transition)
                 continue 
             
             insertion = -1 # Reset the insertions

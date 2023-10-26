@@ -242,7 +242,8 @@ def _number_regions(sequence, state_vector, state_string , region_string,  regio
             
             # Check whether this position is in the scheme as an independent state
             if state_string[state_id-1]=="I": # No, it should be treated as an insertion
-                if previous_state_type != 'd': # Unless there was a deletion beforehand in which case this should be a real pos.
+                if previous_state_type != 'd' or (previous_state_type == 'd' and state_string[previous_state_id-1]=="I"): # Unless there was a deletion beforehand in which case this should be a real pos.
+                    # in case previous deletion was not on independent state - it should not be considered here
                     insertion +=1 # Increment the insertion annotation index
                 rels[region] -= 1 # Update the relative numbering from the imgt states
             else: # Yes 

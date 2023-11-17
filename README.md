@@ -24,6 +24,8 @@ ANARCI -i EVQLQQSGAEVVRSGASVKLSCTASGFNIKDYYIHWVKQRPEKGLEWIGWIDPEIGDTEYVPKFQGKATM
 ANARCI -i myfile.fasta 
 ```
 
+* Please note that while ANARCI uses alignment to species V and J germlines to determine the species of the antibody for purposes of numbering, we do not recommend using ANARCI as your primary species annotation tool
+
 # Installation
 
 The easiest way to install ANARCI and its dependencies is using conda

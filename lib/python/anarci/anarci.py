@@ -85,24 +85,31 @@ def read_fasta(filename):
     """
     Read a sequence file and parse as description, string 
     """
-    return [ r for r in fasta_iter(filename) ]
+    # return [ r for r in fasta_iter(filename) ]
+    try:
+        return [r for r in fasta_iter(filename)]
+    except StopIteration:
+        pass  # Do nothing when the generator stops
 
 def fasta_iter(fasta_name):
     """
-    Given a fasta file. yield tuples of header, sequence
+    Given a fasta file, yield tuples of header, sequence
     https://www.biostars.org/p/710/
     """
-    if fasta_name.endswith( '.gz' ): # IOError raised upon iteration if not a real gzip file.
-        fh = gzip.open(fasta_name)
+    if fasta_name.endswith('.gz'):
+        fh = gzip.open(fasta_name, 'rt')  # 'rt' for text mode, required for Python 3
     else:
-        fh = open(fasta_name)
+        fh = open(fasta_name, 'r')
+    
     faiter = (x[1] for x in groupby(fh, lambda line: line[0] == ">"))
+    
     for header in faiter:
-        header = next(header)[1:].strip()
-        #header = header.next()[1:].strip()
-        seq = "".join(s.strip() for s in next(faiter))
-        yield header, seq
-
+        try:
+            header = next(header)[1:].strip()
+            seq = "".join(s.strip() for s in next(faiter))
+            yield header, seq
+        except StopIteration:
+            break
 
 def write_fasta(sequences, f):
     """
@@ -733,7 +740,8 @@ def check_for_j( sequences, alignments, scheme ):
                             # Sandwich the presumed CDR3 region between the V and J regions.
 
                             vRegion   = ali[:cys_ai+1]
-                            jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117 ]
+                            # jRegion   = [ (state, index+cys_si+1) for state, index in re_states[0] if state[0] >= 117 ]
+                            jRegion = [(state, index+cys_si+1) for state, index in re_states[0] if (state[0] >= 117) and (index is not None)]
                             cdrRegion = []
                             next = 105
                             for si in range( cys_si+1, jRegion[0][1] ):

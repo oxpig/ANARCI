@@ -31,8 +31,8 @@ ANARCI -i myfile.fasta
 The easiest way to install ANARCI and its dependencies is using conda
 
 ```python
-conda install -c conda-forge openmm pdbfixer -y
-conda install -c bioconda hmmer=3.3.2 biopython -y
+conda install -c conda-forge openmm pdbfixer biopython -y
+conda install -c bioconda hmmer=3.3.2 -y
 cd ANARCI
 python setup.py install
 ```

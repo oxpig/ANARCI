@@ -3,7 +3,7 @@ A program to rip the sequences from genedb and parse them into fasta files
 
 Ripped from here:
 
-http://www.imgt.org/vquest/refseqh.html     
+https://www.imgt.org/vquest/refseqh.html     
 """
 
 from html.parser import HTMLParser
@@ -21,24 +21,24 @@ fasta_outpath = os.path.join( file_path, "IMGT_sequence_files", "fastafiles" )
 # Both the v genes (imgt gapped amino acids) and the j genes (amino acids, are not gapped) 
 
 # Urls as of 04-12-14
-urls = { "HV": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+IGHV&species=%s",
-         "HJ": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.6+IGHJ&species=%s",
-         "KV": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+IGKV&species=%s",
-         "KJ": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.6+IGKJ&species=%s",
-         "LV": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+IGLV&species=%s",
-         "LJ": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.6+IGLJ&species=%s",
-         "AV": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+TRAV&species=%s",
-         "AJ": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.6+TRAJ&species=%s",
-         "BV": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+TRBV&species=%s",
-         "BJ": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.6+TRBJ&species=%s",
-         "GV": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+TRGV&species=%s",
-         "GJ": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.6+TRGJ&species=%s",
-         "DV": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+TRDV&species=%s",
-         "DJ": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.6+TRDJ&species=%s"
+urls = { "HV": "https://www.imgt.org/genedb/GENElect?query=7.3+IGHV&species=%s",
+         "HJ": "https://www.imgt.org/genedb/GENElect?query=7.6+IGHJ&species=%s",
+         "KV": "https://www.imgt.org/genedb/GENElect?query=7.3+IGKV&species=%s",
+         "KJ": "https://www.imgt.org/genedb/GENElect?query=7.6+IGKJ&species=%s",
+         "LV": "https://www.imgt.org/genedb/GENElect?query=7.3+IGLV&species=%s",
+         "LJ": "https://www.imgt.org/genedb/GENElect?query=7.6+IGLJ&species=%s",
+         "AV": "https://www.imgt.org/genedb/GENElect?query=7.3+TRAV&species=%s",
+         "AJ": "https://www.imgt.org/genedb/GENElect?query=7.6+TRAJ&species=%s",
+         "BV": "https://www.imgt.org/genedb/GENElect?query=7.3+TRBV&species=%s",
+         "BJ": "https://www.imgt.org/genedb/GENElect?query=7.6+TRBJ&species=%s",
+         "GV": "https://www.imgt.org/genedb/GENElect?query=7.3+TRGV&species=%s",
+         "GJ": "https://www.imgt.org/genedb/GENElect?query=7.6+TRGJ&species=%s",
+         "DV": "https://www.imgt.org/genedb/GENElect?query=7.3+TRDV&species=%s",
+         "DJ": "https://www.imgt.org/genedb/GENElect?query=7.6+TRDJ&species=%s"
          
-         #"HC": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+IGHC&species=%s",
-         #"KC": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+IGKC&species=%s",
-         #"LC": "http://www.imgt.org/IMGT_GENE-DB/GENElect?query=7.3+IGLC&species=%s",
+         #"HC": "https://www.imgt.org/genedb/GENElect?query=7.3+IGHC&species=%s",
+         #"KC": "https://www.imgt.org/genedb/GENElect?query=7.3+IGKC&species=%s",
+         #"LC": "https://www.imgt.org/genedb/GENElect?query=7.3+IGLC&species=%s",
        }
 
 

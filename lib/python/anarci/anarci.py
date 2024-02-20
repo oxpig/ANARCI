@@ -94,22 +94,32 @@ def read_fasta(filename):
 def fasta_iter(fasta_name):
     """
     Given a fasta file, yield tuples of header, sequence
-    https://www.biostars.org/p/710/
     """
     if fasta_name.endswith('.gz'):
         fh = gzip.open(fasta_name, 'rt')  # 'rt' for text mode, required for Python 3
     else:
         fh = open(fasta_name, 'r')
     
-    faiter = (x[1] for x in groupby(fh, lambda line: line[0] == ">"))
+    header = None
+    seq = []
     
-    for header in faiter:
-        try:
-            header = next(header)[1:].strip()
-            seq = "".join(s.strip() for s in next(faiter))
-            yield header, seq
-        except StopIteration:
-            break
+    for line in fh:
+        line = line.strip()
+
+        if len(line) == 0 or line[0] == ";":
+            continue
+
+        if line[0] == ">":  # New entry
+            if header:
+                yield header, "".join(seq)  # Previous entry
+
+            header = line[1:]  # New header
+            seq = []  # Reset the sequence
+        else:
+            seq.append(line)
+
+    if header:
+        yield header, "".join(seq)  # Final entry
 
 def write_fasta(sequences, f):
     """

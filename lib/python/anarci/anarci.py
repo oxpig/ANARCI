@@ -273,6 +273,12 @@ def csv_output(sequences, numbered, details, outfileroot):
 
                 # Iterate over the domains identified
                 for i,j in chain_types[cts]:
+                    try:
+                        j_gene_name = details[i][j].get('germlines',{}).get( 'j_gene',[['',''],0] )[0][1]
+                        j_gene_identity = '%.2f'%details[i][j].get('germlines',{}).get( 'j_gene',[['',''],0] )[1]
+                    except TypeError:
+                        j_gene_name = None
+                        j_gene_identity = 0
                     line = [ sequences[i][0].replace(',',' '),      
                              str(j),
                              details[i][j].get('species',''),
@@ -284,8 +290,8 @@ def csv_output(sequences, numbered, details, outfileroot):
                              details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[0][0],
                              details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[0][1],
                              '%.2f'%details[i][j].get('germlines',{}).get( 'v_gene',[['',''],0] )[1],
-                             details[i][j].get('germlines',{}).get( 'j_gene',[['',''],0] )[0][1],
-                             '%.2f'%details[i][j].get('germlines',{}).get( 'j_gene',[['',''],0] )[1] ]
+                             j_gene_name,
+                             j_gene_identity ]
 
                     # Hash the numbering. Insertion order has been preserved in the positions sort.
                     d = dict( numbered[i][j][0] )

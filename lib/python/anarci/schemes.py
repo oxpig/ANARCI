@@ -177,7 +177,7 @@ def smooth_insertions(state_vector):
                     if reg % 2: # nterm fw
                         new_states = [enforced_patterns[reg][0]]*max( 0, len(state_buffer)-3) + enforced_patterns[reg][ max( 4-len(state_buffer), 1):]
                     else: # cterm fw
-                        new_states = enforced_patterns[reg][:3] + [enforced_patterns[reg][2]]*max( 0, len(state_buffer)-3)
+                        new_states = enforced_patterns[reg][:3] + [enforced_patterns[reg][3]]*max( 0, len(state_buffer)-3)
                     # Assign them preserving the order of the sequence. 
                     for i in range( len(state_buffer ) ):
                         sv.append( ( new_states[i], state_buffer[i][1]) )

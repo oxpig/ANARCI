@@ -100,6 +100,7 @@ if __name__ == "__main__":
     parser.add_argument( '--restrict','-r', type=str, nargs="+", choices=["ig","tr","heavy", "light", "H", "K", "L", "A", "B"], default=False, help="Restrict ANARCI to only recognise certain types of receptor chains.", dest="restrict")    
     parser.add_argument( '--csv', action='store_true', default=False, help="Write the output in csv format. Outfile must be specified. A csv file is written for each chain type <outfile>_<chain_type>.csv. Kappa and lambda are considered together.", dest="csv")
     parser.add_argument( '--outfile_hits','-ht', type=str, default=False, help="Output file for domain hit tables for each sequence. Otherwise not output.", dest="hitfile")
+    parser.add_argument('--json_output_hits', "-jht", type=str, help="Output file for domain hit tables for each sequence. Otherwise not output.", dest="json_hitfile")
     parser.add_argument( '--hmmerpath','-hp', type=str, default="", help="The path to the directory containing hmmer programs. (including hmmscan)", dest="hmmerpath")
     parser.add_argument( '--ncpu','-p', type=int, default=1, help="Number of parallel processes to use. Default is 1.", dest="ncpu")
     parser.add_argument( '--assign_germline', action = 'store_true', default=False, help="Assign the v and j germlines to the sequence. The most sequence identical germline is assigned.", dest="assign_germline")
@@ -195,6 +196,15 @@ if __name__ == "__main__":
                     for line in hit_tables[i]:
                         print(" ".join( [ str(_).rjust(pad) for _ in line  ]), file=outfile)
                     print("//", file=outfile)
+        if args.json_hitfile:
+            import json
+            hit_dicts = []
+            for table in hit_tables:
+                keys = table[0]
+                for row in table[1:]:
+                    hit_dicts.append(dict(zip(keys, row)))
+            with open(args.json_hitfile, "w") as outfile:
+                json.dump(hit_dicts, outfile)
     except Exception as e:
         # An error occurred. Report to screen and die gracefully.            
         print("Error: ", e, file=sys.stderr)

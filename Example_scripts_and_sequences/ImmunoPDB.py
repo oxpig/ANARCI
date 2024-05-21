@@ -66,13 +66,14 @@ Freely distributed under the BSD 3-Clause Licence.
 # Antigen receptor numbering and classification.
 from anarci import anarci, scheme_names, scheme_short_to_long
 
-# Biopython 
+# Biopython - you must use the dev version for this to work. Got to: https://github.com/biopython/biopython
+# Must be version 1.84 or greater.
 from Bio.PDB import *
 from Bio.File import as_handle
-from Bio.Alphabet import generic_protein
+# from Bio.Alphabet import generic_protein
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Data.SCOPData import protein_letters_3to1
+from Bio.SCOP.Raf import protein_letters_3to1_extended as protein_letters_3to1
 from Bio.SeqUtils import seq1
 
 # Python

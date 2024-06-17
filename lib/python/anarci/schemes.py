@@ -242,7 +242,8 @@ def _number_regions(sequence, state_vector, state_string , region_string,  regio
             
             # Check whether this position is in the scheme as an independent state
             if state_string[state_id-1]=="I": # No, it should be treated as an insertion
-                if previous_state_type != 'd': # Unless there was a deletion beforehand in which case this should be a real pos.
+                if previous_state_type != 'd' and state_string[previous_state_id-1] == "X": # Unless there was a deletion beforehand in which case this should be a real pos.
+                    # in case previous deletion was not on independent state - it should not be considered here
                     insertion +=1 # Increment the insertion annotation index
                 rels[region] -= 1 # Update the relative numbering from the imgt states
             else: # Yes 
@@ -250,12 +251,12 @@ def _number_regions(sequence, state_vector, state_string , region_string,  regio
             
             # Add the numbering annotation to the appropriate region list            
             _regions[region].append( ( (state_id + rels[region], alphabet[insertion] ), sequence[si]  ) )
-            previous_state_id = state_id # Record the previous state ID
             if start_index is None:
                 start_index = si
             end_index = si
 
             previous_state_type = state_type
+            previous_state_id = state_id 
             
         elif state_type == "i": # It is an insertion
             insertion +=1 # Increment the insertion annotation index
@@ -267,9 +268,11 @@ def _number_regions(sequence, state_vector, state_string , region_string,  regio
             end_index = si
 
             previous_state_type = state_type
+            previous_state_id = state_id 
 
         else: # It is a deletion
             previous_state_type = state_type
+            previous_state_id = state_id 
             
             # Check whether this position is in the scheme as an independent state
             if state_string[state_id-1]=="I": # No, therefore irrelevant to the scheme.
@@ -277,7 +280,6 @@ def _number_regions(sequence, state_vector, state_string , region_string,  regio
                 continue 
             
             insertion = -1 # Reset the insertions
-            previous_state_id = state_id # Record the previous state ID, should not be needed (no delete to insert state transition)
 
 
         # Reset the inssertion index if necessary and allowed. (Means the insertion code is meaningless and will be reannotated)

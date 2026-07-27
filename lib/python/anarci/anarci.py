@@ -299,12 +299,14 @@ def csv_output(sequences, numbered, details, outfileroot):
 ## Parsing and recognising domain hits from hmmscan ##
 def _domains_are_same(dom1, dom2):
     """
-    Check to see if the domains are overlapping.
+    Check to see if the domains are overlapping and of the same chain type.
     @param dom1: 
     @param dom2: 
 
     @return: True or False  
     """
+    if dom1.hit_id.split('_')[1] != dom2.hit_id.split('_')[1]: # Different chain types are never the same domain, however much they overlap (e.g. TRA vs TRD, or IGK vs IGL).
+        return False
     dom1, dom2 = sorted( [dom1, dom2], key=lambda x: x.query_start  )
     if dom2.query_start >= dom1.query_end:
         return False
